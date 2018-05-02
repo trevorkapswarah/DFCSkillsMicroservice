@@ -1,0 +1,6 @@
+﻿@model DFC.Microservices.Skills.Models.SkillsModel
+
+<ul class="skills-set">
+    @foreach (var skill in Model.Skills.Take(2))
+    {<li>@skill</li>}
+</ul>
