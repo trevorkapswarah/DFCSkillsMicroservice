@@ -1,0 +1,6 @@
+﻿################################################################################
+# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+################################################################################
+
+/DFC.Microservices.Skills/DFC.Microservices.Skills/obj
+/DFC.Microservices.Skills/.vs/DFC.Microservices.Skills/v15/Server/sqlite3

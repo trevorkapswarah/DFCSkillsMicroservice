@@ -1,0 +1,15 @@
+networks:
+  default:
+    external:
+      name: nat
+services:
+  dfc.microservices.skills:
+    build:
+      context: C:\PersonalRepos\DFCSkillsMicroservice\DFC.Microservices.Skills
+      dockerfile: DFC.Microservices.Skills\Dockerfile
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+    image: dfcmicroservicesskills
+    ports:
+    - 80/tcp
+version: '3.0'
