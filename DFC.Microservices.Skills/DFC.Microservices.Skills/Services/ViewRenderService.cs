@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Threading.Tasks;
+using DFC.Microservices.Skills.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Abstractions;
@@ -12,11 +13,6 @@ using Microsoft.AspNetCore.Routing;
 
 namespace DFC.Microservices.Skills.Services
 {
-    public interface IViewRenderService
-    {
-        Task<string> RenderToStringAsync(string viewName, object model);
-    }
-
     public class ViewRenderService : IViewRenderService
     {
         private readonly IRazorViewEngine _razorViewEngine;

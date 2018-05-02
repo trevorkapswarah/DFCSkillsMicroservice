@@ -1,4 +1,5 @@
-﻿using DFC.Microservices.Skills.Services;
+﻿using DFC.Microservices.Skills.Interfaces;
+using DFC.Microservices.Skills.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -20,6 +21,7 @@ namespace DFC.Microservices.Skills
         {
             services.AddMvc();
             services.AddScoped<IViewRenderService, ViewRenderService>();
+            services.AddScoped<ISkillsService, SkillsService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
