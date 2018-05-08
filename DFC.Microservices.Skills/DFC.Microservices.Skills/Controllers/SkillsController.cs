@@ -27,7 +27,8 @@ namespace DFC.Microservices.Skills.Controllers
 
             var model = new SkillsModel
             {
-                Skills = await skillsService.GetSkillsByJobProfileUrlName(urlName)
+                Skills = await skillsService.GetSkillsByJobProfileUrlName(urlName),
+                JobProfileUrl = urlName
             };
 
             var viewString = await viewRenderService.RenderToStringAsync("SkillsList", model);
