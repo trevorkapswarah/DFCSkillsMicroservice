@@ -5,4 +5,4 @@ services:
     image: dfcmicroservicesskills
     build:
       context: .
-      dockerfile: DFC.Microservices.Skills\Dockerfile
+      dockerfile: DFC.Microservices.Skills/Dockerfile

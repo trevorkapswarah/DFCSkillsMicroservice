@@ -1,32 +1,11 @@
-networks:
-  default:
-    external:
-      name: nat
 services:
   dfc.microservices.skills:
     build:
       context: C:\PersonalRepos\DFCSkillsMicroservice\DFC.Microservices.Skills
-      dockerfile: DFC.Microservices.Skills\Dockerfile
-    entrypoint: C:\\remote_debugger\\x64\\msvsmon.exe /noauth /anyuser /silent /nostatus
-      /noclrwarn /nosecuritywarn /nofirewallwarn /nowowwarn /timeout:2147483646
+      dockerfile: DFC.Microservices.Skills/Dockerfile
     environment:
       ASPNETCORE_ENVIRONMENT: Development
-      DOTNET_USE_POLLING_FILE_WATCHER: '1'
-      NUGET_FALLBACK_PACKAGES: c:\.nuget\fallbackpackages
-      NUGET_PACKAGES: C:\.nuget\packages
-    image: dfcmicroservicesskills:dev
-    labels:
-      com.microsoft.visualstudio.debuggee.arguments: ' --additionalProbingPath c:\.nuget\packages
-        --additionalProbingPath c:\.nuget\fallbackpackages  bin\Debug\netcoreapp2.0\DFC.Microservices.Skills.dll'
-      com.microsoft.visualstudio.debuggee.killprogram: C:\remote_debugger\x64\utils\KillProcess.exe
-        dotnet.exe
-      com.microsoft.visualstudio.debuggee.program: '"C:\Program Files\dotnet\dotnet.exe"'
-      com.microsoft.visualstudio.debuggee.workingdirectory: C:\app
+    image: dfcmicroservicesskills
     ports:
     - 80/tcp
-    volumes:
-    - C:\PersonalRepos\DFCSkillsMicroservice\DFC.Microservices.Skills\DFC.Microservices.Skills:C:\app:rw
-    - C:\Users\trevorkapswarah\onecoremsvsmon\15.0.27428.2043:C:\remote_debugger:ro
-    - C:\Program Files\dotnet\sdk\NuGetFallbackFolder:c:\.nuget\fallbackpackages:ro
-    - C:\Users\trevorkapswarah\.nuget\packages:c:\.nuget\packages:ro
 version: '3.0'
