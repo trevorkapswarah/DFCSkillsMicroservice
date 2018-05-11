@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using DFC.Microservices.Skills.Interfaces;
 using Microsoft.AspNetCore.Http;
@@ -8,6 +9,7 @@ using Microsoft.AspNetCore.Mvc.Abstractions;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Mvc.Razor;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.AspNetCore.Mvc.ViewEngines;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.AspNetCore.Routing;
 
@@ -15,50 +17,73 @@ namespace DFC.Microservices.Skills.Services
 {
     public class ViewRenderService : IViewRenderService
     {
-        private readonly IRazorViewEngine _razorViewEngine;
-        private readonly ITempDataProvider _tempDataProvider;
-        private readonly IServiceProvider _serviceProvider;
+        private IRazorViewEngine _viewEngine;
+        private ITempDataProvider _tempDataProvider;
+        private IServiceProvider _serviceProvider;
 
-        public ViewRenderService(IRazorViewEngine razorViewEngine,
+        public ViewRenderService(
+            IRazorViewEngine viewEngine,
             ITempDataProvider tempDataProvider,
             IServiceProvider serviceProvider)
         {
-            _razorViewEngine = razorViewEngine;
+            _viewEngine = viewEngine;
             _tempDataProvider = tempDataProvider;
             _serviceProvider = serviceProvider;
         }
 
-        public async Task<string> RenderToStringAsync(string viewName, object model)
+        public async Task<string> RenderViewToStringAsync<TModel>(string viewName, TModel model)
         {
-            var httpContext = new DefaultHttpContext { RequestServices = _serviceProvider };
-            var actionContext = new ActionContext(httpContext, new RouteData(), new ActionDescriptor());
+            var actionContext = GetActionContext();
+            var view = FindView(actionContext, viewName);
 
-            using (var sw = new StringWriter())
+            using (var output = new StringWriter())
             {
-                var viewResult = _razorViewEngine.FindView(actionContext, viewName, false);
-
-                if (viewResult.View == null)
-                {
-                    throw new ArgumentNullException($"{viewName} does not match any available view");
-                }
-
-                var viewDictionary = new ViewDataDictionary(new EmptyModelMetadataProvider(), new ModelStateDictionary())
-                {
-                    Model = model
-                };
-
                 var viewContext = new ViewContext(
                     actionContext,
-                    viewResult.View,
-                    viewDictionary,
+                    view,
+                    new ViewDataDictionary<TModel>(
+                        metadataProvider: new EmptyModelMetadataProvider(),
+                        modelState: new ModelStateDictionary())
+                    {
+                        Model = model
+                    },
                     new TempDataDictionary(actionContext.HttpContext, _tempDataProvider),
-                    sw,
-                    new HtmlHelperOptions()
-                );
+                    output,
+                    new HtmlHelperOptions());
 
-                await viewResult.View.RenderAsync(viewContext);
-                return sw.ToString();
+                await view.RenderAsync(viewContext);
+
+                return output.ToString();
             }
+        }
+
+        private IView FindView(ActionContext actionContext, string viewName)
+        {
+            var getViewResult = _viewEngine.GetView(executingFilePath: null, viewPath: viewName, isMainPage: true);
+            if (getViewResult.Success)
+            {
+                return getViewResult.View;
+            }
+
+            var findViewResult = _viewEngine.FindView(actionContext, viewName, isMainPage: true);
+            if (findViewResult.Success)
+            {
+                return findViewResult.View;
+            }
+
+            var searchedLocations = getViewResult.SearchedLocations.Concat(findViewResult.SearchedLocations);
+            var errorMessage = string.Join(
+                Environment.NewLine,
+                new[] { $"Unable to find view '{viewName}'. The following locations were searched:" }.Concat(searchedLocations)); ;
+
+            throw new InvalidOperationException(errorMessage);
+        }
+
+        private ActionContext GetActionContext()
+        {
+            var httpContext = new DefaultHttpContext();
+            httpContext.RequestServices = _serviceProvider;
+            return new ActionContext(httpContext, new RouteData(), new ActionDescriptor());
         }
     }
 }
