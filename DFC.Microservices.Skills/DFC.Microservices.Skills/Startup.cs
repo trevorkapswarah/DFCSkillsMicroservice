@@ -1,7 +1,10 @@
 ﻿using DFC.Microservices.Skills.Interfaces;
+using DFC.Microservices.Skills.Repositories;
+using DFC.Microservices.Skills.Repositories.DataAccessPostgreSqlProvider;
 using DFC.Microservices.Skills.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -22,6 +25,7 @@ namespace DFC.Microservices.Skills
             services.AddMvc();
             services.AddScoped<IViewRenderService, ViewRenderService>();
             services.AddScoped<ISkillsService, SkillsService>();
+            services.AddScoped<IRepository, PostgreSqlRepository>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

@@ -3,6 +3,8 @@ services:
     build:
       context: C:\PersonalRepos\DFCSkillsMicroservice\DFC.Microservices.Skills
       dockerfile: DFC.Microservices.Skills/Dockerfile
+    depends_on:
+    - skillsmicroservicerepo
     entrypoint: tail -f /dev/null
     environment:
       ASPNETCORE_ENVIRONMENT: Development
@@ -23,4 +25,15 @@ services:
     - C:\Users\trevorkapswarah\vsdbg\vs2017u5:/remote_debugger:ro
     - C:\Program Files\dotnet\sdk\NuGetFallbackFolder:/root/.nuget/fallbackpackages:ro
     - C:\Users\trevorkapswarah\.nuget\packages:/root/.nuget/packages:ro
+  skillsmicroservicerepo:
+    environment:
+      POSTGRES_DB: dfc-skills
+      POSTGRES_PASSWORD: p@55w0rd
+    image: monsteruk/dfc.skillsmicroservice.repo
+    ports:
+    - 5432:5432/tcp
+    volumes:
+    - dfc-postgresql-data-volume:/var/lib/postgresql/data:rw
 version: '3.0'
+volumes:
+  dfc-postgresql-data-volume: {}
