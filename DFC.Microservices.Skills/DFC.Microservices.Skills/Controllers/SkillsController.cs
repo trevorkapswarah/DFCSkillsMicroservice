@@ -31,7 +31,7 @@ namespace DFC.Microservices.Skills.Controllers
                 JobProfileUrl = urlName
             };
 
-            var viewString = await viewRenderService.RenderToStringAsync("SkillsList", model);
+            var viewString = await viewRenderService.RenderViewToStringAsync("SkillsList", model);
 
             result.TryAdd("Skills", viewString);
 

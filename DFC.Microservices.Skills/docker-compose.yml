@@ -6,16 +6,3 @@ services:
     build:
       context: .
       dockerfile: DFC.Microservices.Skills/Dockerfile
-    depends_on:
-            - skillsmicroservicerepo
-  skillsmicroservicerepo:
-    image: monsteruk/dfc.skillsmicroservice.repo
-    ports:
-      - "5432:5432"
-    volumes:
-      - dfc-postgresql-data-volume:/var/lib/postgresql/data
-    env_file:
-      - DFC.Microservices.Skills/.docker/env/dev.postgress.env
-
-volumes:
-  dfc-postgresql-data-volume: {}

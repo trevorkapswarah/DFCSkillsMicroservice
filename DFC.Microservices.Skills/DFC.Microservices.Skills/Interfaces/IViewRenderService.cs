@@ -4,6 +4,6 @@ namespace DFC.Microservices.Skills.Interfaces
 {
     public interface IViewRenderService
     {
-        Task<string> RenderToStringAsync(string viewName, object model);
+        Task<string> RenderViewToStringAsync<TModel>(string viewName, TModel model);
     }
 }
